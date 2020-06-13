@@ -15,7 +15,6 @@ var commentRoutes       = require("./routes/comments"),
     campgroundRoutes    = require("./routes/campgrounds"),
     authRoutes          = require("./routes/index");
 
-
 // mongoose.connect("mongodb://localhost:27017/yelp_camp");
 mongoose.connect("mongodb+srv://yelpcamp:YelpcampIsAmazing@yelpcamp-dqdxk.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority", {
     useNewUrlParser: true,
@@ -26,6 +25,10 @@ mongoose.connect("mongodb+srv://yelpcamp:YelpcampIsAmazing@yelpcamp-dqdxk.gcp.mo
     console.log("Error: ", err.message);
 });
 
+// var uri = "mongodb+srv://yelpcamp:YelpcampIsAmazing@yelpcamp-dqdxk.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority";
+// mongoose.connect(uri, function(err, db) {
+//     db.close();
+//   });
 
 mongoose.set('useUnifiedTopology', true);
 mongoose.set('useFindAndModify', false);
