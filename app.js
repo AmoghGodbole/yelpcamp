@@ -16,7 +16,17 @@ var commentRoutes       = require("./routes/comments"),
     authRoutes          = require("./routes/index");
 
 
-mongoose.connect("mongodb://localhost:27017/yelp_camp");
+// mongoose.connect("mongodb://localhost:27017/yelp_camp");
+mongoose.connect("mongodb+srv://yelpcamp:YelpcampIsAmazing@yelpcamp-dqdxk.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority", {
+    useNewUrlParser: true,
+    useCreateIndex: true
+}).then(() => {
+    console.log("Connected");
+}).catch(err => {
+    console.log("Error: ", err.message);
+});
+
+
 mongoose.set('useUnifiedTopology', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useNewUrlParser', true);
