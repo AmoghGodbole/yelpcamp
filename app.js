@@ -16,7 +16,8 @@ var commentRoutes       = require("./routes/comments"),
     authRoutes          = require("./routes/index");
 
 // mongoose.connect("mongodb://localhost:27017/yelp_camp");
-mongoose.connect("mongodb+srv://yelpcamp:YelpcampIsAmazing@yelpcamp-dqdxk.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority", {
+var uri = "mongodb+srv://yelpcamp:YelpcampIsAmazing@yelpcamp-dqdxk.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority"
+mongoose.connect(process.env.MONGODB_URI || uri, {
     useNewUrlParser: true,
     useCreateIndex: true
 }).then(() => {
@@ -24,11 +25,6 @@ mongoose.connect("mongodb+srv://yelpcamp:YelpcampIsAmazing@yelpcamp-dqdxk.gcp.mo
 }).catch(err => {
     console.log("Error: ", err.message);
 });
-
-// var uri = "mongodb+srv://yelpcamp:YelpcampIsAmazing@yelpcamp-dqdxk.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority";
-// mongoose.connect(uri, function(err, db) {
-//     db.close();
-//   });
 
 mongoose.set('useUnifiedTopology', true);
 mongoose.set('useFindAndModify', false);
