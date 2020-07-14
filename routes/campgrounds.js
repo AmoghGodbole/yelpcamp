@@ -1,51 +1,54 @@
-var express = require("express");
-var router = express.Router();
-var Campground = require("../models/campground");
-var middleware = require("../middleware");
-//No need to do middleare/index.js
-//The reason is that index.js is a special name which is automatically required(put in very basic terms)
+const express = require("express");
+const router = express.Router();
+const Campground = require("../models/campground");
+const middleware = require("../middleware");
 
-//Index- Show all campgrounds
+//INDEX - show all campgrounds
 router.get("/", function(req, res){
-    // Get all cammpgrounds from DB
+    // Get all campgrounds from DB
     Campground.find({}, function(err, allCampgrounds){
         if(err){
-            console.log(err);
+           console.log(err);
         }else{
-            res.render("campgrounds/index", {campgrounds: allCampgrounds, page: "campgrounds"});
+          res.render("campgrounds/index",{campgrounds:allCampgrounds});
         }
-    });    
+    });
 });
 
-router.post("/", middleware.isLoggedIn, function(req,res){
-    var name = req.body.name;
-    var price = req.body.price
-    var image = req.body.image;
-    var desc = req.body.description;
-    var author = {
+
+//CREATE - add new campground to DB
+router.post("/", middleware.isLoggedIn, function(req, res){
+    // get data from form and add to campgrounds array
+    const name = req.body.name;
+    const image = req.body.image;
+    const desc = req.body.description;
+    const price = req.body.price;
+    const author = {
         id: req.user._id,
         username: req.user.username
     }
-    var newCampground = {name: name, image: image, description: desc, author: author, price: price}
-    //Create a new campground and save to db
+    const newCampground = {name: name, image: image, description: desc, author:author, price: price}
+    // Create a new campground and save to DB
     Campground.create(newCampground, function(err, newlyCreated){
         if(err){
+            req.flash("error", "Something went wrong!");
+            res.redirect("back");
             console.log(err);
-        }
-        else{
+        }else{
+            //redirect back to campgrounds page
+            console.log(newlyCreated);
             res.redirect("/campgrounds");
         }
-    })
+    });
 });
-
 //New Route
-router.get("/new", middleware.isLoggedIn, function(req, res){
+router.get("/new", middleware.isLoggedIn, (req, res) => {
     res.render("campgrounds/new");
 });
 
 //Show Route
-router.get("/:id", function(req, res){
-    Campground.findById(req.params.id).populate("comments").exec(function(err, foundCampground){
+router.get("/:id", (req, res) => {
+    Campground.findById(req.params.id).populate("comments").exec((err, foundCampground) => {
         if(err || !foundCampground){
             req.flash("error", "Campground not found!");
             res.redirect("back");
@@ -59,29 +62,35 @@ router.get("/:id", function(req, res){
 });
 
 //Edit Campground route
-router.get("/:id/edit", middleware.checkCampgroundOwnership, function(req, res){
-    Campground.findById(req.params.id, function(err, foundCampground){
+router.get("/:id/edit", middleware.checkCampgroundOwnership, (req, res) => {
+    Campground.findById(req.params.id, (err, foundCampground) => {
         //You can add in another flash message here, to handle the err
         res.render("campgrounds/edit", {campground: foundCampground});
     });         
 });
 
-//Update Campground route
-router.put("/:id", middleware.checkCampgroundOwnership, function(req,res){
-    //Find and Update the correct campground
-    Campground.findByIdAndUpdate(req.params.id, req.body.campground, function(err, updatedCampground){
+// Update Campground Route
+router.put("/:id", function(req, res){
+    const newData = {
+        name: req.body.campground.name, 
+        image: req.body.campground.image, 
+        description: req.body.campground.desc,
+        price: req.body.campground.price
+    };
+    Campground.findByIdAndUpdate(req.params.id, {$set: newData}, function(err, campground){
         if(err){
-            res.redirect("/campgrounds");
+            req.flash("error", err.message);
+            res.redirect("back");
         }else{
-            //Redirect(mostly to the show page to view what you have edited)
-            res.redirect("/campgrounds/" + req.params.id);  //updatedCampground._id will also work of course
+            req.flash("success","Successfully Updated!");
+            res.redirect("/campgrounds/" + campground._id);
         }
     });
 });
 
 //Destroy campground route
-router.delete("/:id", middleware.checkCampgroundOwnership, function(req,res){
-    Campground.findByIdAndRemove(req.params.id, function(err){
+router.delete("/:id", middleware.checkCampgroundOwnership, (req,res) => {
+    Campground.findByIdAndRemove(req.params.id, (err) => {
         if(err){
             res.redirect("/campgrounds");
         }else{
@@ -90,4 +99,8 @@ router.delete("/:id", middleware.checkCampgroundOwnership, function(req,res){
     });
 });
 
-module.exports = router;
+module.exports = router;    
+
+
+
+

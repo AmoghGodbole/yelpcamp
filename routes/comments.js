@@ -1,14 +1,14 @@
-var express = require("express");
-var router = express.Router({mergeParams: true});
-var Campground = require("../models/campground");
-var Comment = require("../models/comment");
-var middleware = require("../middleware");
+const express = require("express");
+const router = express.Router({mergeParams: true});
+const Campground = require("../models/campground");
+const Comment = require("../models/comment");
+const middleware = require("../middleware");
 
 //========================
 //  Comments Route
 //========================
-router.get("/new", middleware.isLoggedIn, function(req, res){
-    Campground.findById(req.params.id, function(err, campground){
+router.get("/new", middleware.isLoggedIn, (req, res) => {
+    Campground.findById(req.params.id, (err, campground) => {
         if(err || !campground){
             req.flash("error", "Campground not found");
             res.redirect("back");
@@ -19,13 +19,13 @@ router.get("/new", middleware.isLoggedIn, function(req, res){
 });
 
 //Comments create route
-router.post("/", middleware.isLoggedIn, function(req,res){
-    Campground.findById(req.params.id, function(err,campground){
+router.post("/", middleware.isLoggedIn, (req,res) => {
+    Campground.findById(req.params.id, (err,campground) => {
         if(err){
             console.log(err);
             res.redirect("/campgrounds");
         }else{
-            Comment.create(req.body.comment, function(err, comment){
+            Comment.create(req.body.comment, (err, comment) => {
                 if(err){
                     req.flash("error", "Something went wrong");  //Probably will never be hit
                     console.log(err);
@@ -48,13 +48,13 @@ router.post("/", middleware.isLoggedIn, function(req,res){
 });
 
 //Edit Route for comments
-router.get("/:comment_id/edit", middleware.checkCommentOwnership, function(req, res){
-    Campground.findById(req.params.id, function(err, foundCampground){
+router.get("/:comment_id/edit", middleware.checkCommentOwnership, (req, res) => {
+    Campground.findById(req.params.id, (err, foundCampground) => {
         if(err || !foundCampground){
             req.flash("error", "Campground not found!");
             return res.redirect("back");
         }
-        Comment.findById(req.params.comment_id, function(err, foundComment){
+        Comment.findById(req.params.comment_id, (err, foundComment) => {
             if(err){
                 res.redirect("back");
             }else{
@@ -65,8 +65,8 @@ router.get("/:comment_id/edit", middleware.checkCommentOwnership, function(req, 
 });
 
 //Update route for comments
-router.put("/:comment_id", middleware.checkCommentOwnership, function(req, res){
-    Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function(err, updatedComment){
+router.put("/:comment_id", middleware.checkCommentOwnership, (req, res) => {
+    Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, (err, updatedComment) => {
         if(err){
             res.redirect("back");
         }else{
@@ -76,8 +76,8 @@ router.put("/:comment_id", middleware.checkCommentOwnership, function(req, res){
 });
 
 //Destroy route for comments
-router.delete("/:comment_id", middleware.checkCommentOwnership, function(req, res){
-    Comment.findByIdAndRemove(req.params.comment_id, function(err){
+router.delete("/:comment_id", middleware.checkCommentOwnership, (req, res) => {
+    Comment.findByIdAndRemove(req.params.comment_id, (err) => {
         if(err){
             res.redirect("back");
         }else{

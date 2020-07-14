@@ -1,22 +1,23 @@
-var express         = require("express"),
-    app             = express(),
-    bodyParser      = require("body-parser"),
-    mongoose        = require("mongoose"),
-    flash           = require("connect-flash"),
-    passport        = require("passport"),
-    LocalStrategy   = require("passport-local"),
-    methodOverride  = require("method-override"),
-    Campground      = require("./models/campground"),
-    Comment         = require("./models/comment"),
-    User            = require("./models/user"),
-    seedDB          = require("./seeds");
+require("dotenv").config();
 
-var commentRoutes       = require("./routes/comments"),
-    campgroundRoutes    = require("./routes/campgrounds"),
-    authRoutes          = require("./routes/index");
+const   express         = require("express"),
+        app             = express(),
+        bodyParser      = require("body-parser"),
+        mongoose        = require("mongoose"),
+        flash           = require("connect-flash"),
+        passport        = require("passport"),
+        LocalStrategy   = require("passport-local"),
+        methodOverride  = require("method-override"),
+        Campground      = require("./models/campground"),
+        Comment         = require("./models/comment"),
+        User            = require("./models/user");
+
+const   commentRoutes       = require("./routes/comments"),
+        campgroundRoutes    = require("./routes/campgrounds"),
+        authRoutes          = require("./routes/index");
 
 // mongoose.connect("mongodb://localhost:27017/yelp_camp");
-var uri = "mongodb+srv://yelpcamp:YelpcampIsAmazing@yelpcamp-dqdxk.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority"
+const uri = "mongodb+srv://yelpcamp:YelpcampIsAmazing@yelpcamp-dqdxk.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority"
 mongoose.connect(process.env.MONGODB_URI || uri, {
     useNewUrlParser: true,
     useCreateIndex: true
@@ -42,13 +43,14 @@ app.use(require("express-session")({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(methodOverride("_method")); 
+app.locals.moment = require("moment");
 passport.use(new LocalStrategy(User.authenticate())); 
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 //The three methods used above come with passport-local-mongoose; we have not written it
 //These three lines are necessary in configuring the passport module
 
-app.use(function(req, res, next){       
+app.use((req, res, next) => {       
     //This is our very own middleware.
     //This is so that we don't have to pass in currentUser manually on every route
     //app.use() is always called on all routes as we start the server 

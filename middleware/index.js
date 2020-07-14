@@ -1,16 +1,16 @@
 //All the middleware goes here
-var middlewareObj = [];
-var Campground = require("../models/campground");
-var Comment = require("../models/comment");
+const middlewareObj = [];
+const Campground = require("../models/campground");
+const Comment = require("../models/comment");
 
-middlewareObj.checkCampgroundOwnership = function(req, res, next){
+middlewareObj.checkCampgroundOwnership = (req, res, next) => {
     if(req.isAuthenticated()){
-        Campground.findById(req.params.id, function(err, foundCampground){
+        Campground.findById(req.params.id, (err, foundCampground) => {
             if(err || !foundCampground){
                 req.flash("error", "Campground not found");
                 res.redirect("/campgrounds");
             }else{
-                if(foundCampground.author.id.equals(req.user.id)){
+                if(foundCampground.author.id.equals(req.user.id) || req.user.isAdmin){
                     next();
                 }else{
                     req.flash("error", "You don't have permission to do that!");
@@ -24,14 +24,14 @@ middlewareObj.checkCampgroundOwnership = function(req, res, next){
     }
 }
 
-middlewareObj.checkCommentOwnership = function(req, res, next){
+middlewareObj.checkCommentOwnership = (req, res, next) => {
     if(req.isAuthenticated()){
-        Comment.findById(req.params.comment_id, function(err, foundComment){
+        Comment.findById(req.params.comment_id, (err, foundComment) => {
             if(err || !foundComment){
                 req.flash("error", "Comment not found");
                 res.redirect("back");
             }else{
-                if(foundComment.author.id.equals(req.user._id)){
+                if(foundComment.author.id.equals(req.user._id) || req.user.isAdmin){
                     next();
                 }else{
                     req.flash("error", "You don't have permission to do that!");
@@ -45,7 +45,7 @@ middlewareObj.checkCommentOwnership = function(req, res, next){
     }
 }
 
-middlewareObj.isLoggedIn = function(req, res, next){
+middlewareObj.isLoggedIn = (req, res, next) => {
     if(req.isAuthenticated()){
         return next();
     }
