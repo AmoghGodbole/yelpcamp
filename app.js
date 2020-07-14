@@ -2,15 +2,15 @@ require("dotenv").config();
 
 const   express         = require("express"),
         app             = express(),
-        bodyParser      = require("body-parser"),
-        mongoose        = require("mongoose"),
+        User            = require("./models/user"),
         flash           = require("connect-flash"),
-        passport        = require("passport"),
-        LocalStrategy   = require("passport-local"),
-        methodOverride  = require("method-override"),
-        Campground      = require("./models/campground"),
         Comment         = require("./models/comment"),
-        User            = require("./models/user");
+        mongoose        = require("mongoose"),
+        passport        = require("passport"),
+        bodyParser      = require("body-parser"),
+        Campground      = require("./models/campground"),
+        LocalStrategy   = require("passport-local"),
+        methodOverride  = require("method-override");
 
 const   commentRoutes       = require("./routes/comments"),
         campgroundRoutes    = require("./routes/campgrounds"),
