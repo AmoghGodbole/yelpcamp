@@ -33,7 +33,7 @@ body{
 }
 
 /* Campground show page delete button */
-.delete-form{
+#deleteForm{
     display: inline-block;
 }
 
