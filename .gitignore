@@ -1,4 +1,3 @@
 .env
 # This will ignore the .env file
 # We are ignoring .env because we don't want people to see the API Key(on github)
-/node_modules
